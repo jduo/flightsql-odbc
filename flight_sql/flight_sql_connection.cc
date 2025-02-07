@@ -114,7 +114,7 @@ inline std::string GetCerts() {
 
 #endif
 
-const std::set<std::string, odbcabstraction::CaseInsensitiveComparator> BUILT_IN_PROPERTIES = {
+const std::set<std::string, Connection::CaseInsensitiveComparator> BUILT_IN_PROPERTIES = {
     FlightSqlConnection::HOST,
     FlightSqlConnection::PORT,
     FlightSqlConnection::USER,
@@ -175,6 +175,9 @@ void FlightSqlConnection::Connect(const ConnPropertyMap &properties,
     std::unique_ptr<FlightClient> flight_client;
     ThrowIfNotOK(
       FlightClient::Connect(location, client_options, &flight_client));
+
+    PopulateMetadataSettings(properties);
+    PopulateCallOptions(properties);
 
     std::unique_ptr<FlightSqlAuthMethod> auth_method =
       FlightSqlAuthMethod::FromProperties(flight_client, properties);
